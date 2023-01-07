@@ -1,4 +1,3 @@
-cd /opt/software/herostory
 mvn package
 docker rm -f game
 docker rmi -f diaoyuhang/herostory:1
