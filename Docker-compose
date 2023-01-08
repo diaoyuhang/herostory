@@ -1,0 +1,7 @@
+version: "3.3"
+services:
+  game:
+    build: /opt/software/herostory
+    restart: always
+    ports:
+      - "8080:8080"
