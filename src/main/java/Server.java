@@ -1,4 +1,6 @@
-import io.netty.bootstrap.Bootstrap;
+import handler.GameMsgDecoder;
+import handler.GameMsgEncoder;
+import handler.GameMsgInbound;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,7 +10,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 
 public class Server {
@@ -23,9 +24,13 @@ public class Server {
             @Override
             protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                 ChannelPipeline pipeline = nioSocketChannel.pipeline();
+
+                //由于HttpServerCodec已经保证了消息的完整新，就不需要自己再进行拆包粘包处理
                 pipeline.addLast(new HttpServerCodec());
                 pipeline.addLast(new HttpObjectAggregator(65535));
                 pipeline.addLast(new WebSocketServerProtocolHandler("/websocket"));
+                pipeline.addLast(new GameMsgDecoder());
+                pipeline.addLast(new GameMsgEncoder());
                 pipeline.addLast(new GameMsgInbound());
 
             }
