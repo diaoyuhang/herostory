@@ -5,6 +5,6 @@ public class GameMsgInbound extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
-        System.out.println(o);
+        System.out.println("msg:"+o);
     }
 }
