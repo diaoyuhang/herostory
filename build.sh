@@ -1,4 +1,5 @@
 cd /opt/software/herostory
+git pull
 mvn clean
 mvn package
 docker rm -f game
