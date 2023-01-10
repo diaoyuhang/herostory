@@ -10,7 +10,7 @@ import msg.GameMsgProtocol;
 public class GameMsgDecoder extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
+        //前面的HttpServerCodec已经保证的消息的完整性
         BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
         ByteBuf byteBuf = binaryWebSocketFrame.content();
         //读掉消息的长度
@@ -25,6 +25,12 @@ public class GameMsgDecoder extends ChannelInboundHandlerAdapter {
         switch (msgCode) {
             case GameMsgProtocol.MsgCode.USER_ENTRY_CMD_VALUE:
                 cmd = GameMsgProtocol.UserEntryCmd.parseFrom(msgBody);
+                break;
+            case GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_CMD_VALUE:
+                cmd = GameMsgProtocol.WhoElseIsHereCmd.parseFrom(msgBody);
+                break;
+            case GameMsgProtocol.MsgCode.USER_MOVE_TO_CMD_VALUE:
+                cmd = GameMsgProtocol.UserMoveToCmd.parseFrom(msgBody);
                 break;
             default:
                 break;

@@ -23,6 +23,12 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
         if (msg instanceof GameMsgProtocol.UserEntryResult) {
             msgCode = GameMsgProtocol.MsgCode.USER_ENTRY_RESULT_VALUE;
 
+        } else if (msg instanceof GameMsgProtocol.WhoElseIsHereResult) {
+            msgCode = GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_RESULT_VALUE;
+        } else if (msg instanceof GameMsgProtocol.UserQuitResult) {
+            msgCode = GameMsgProtocol.MsgCode.USER_QUIT_RESULT_VALUE;
+        } else if (msg instanceof GameMsgProtocol.UserMoveToResult){
+            msgCode = GameMsgProtocol.MsgCode.USER_MOVE_TO_RESULT_VALUE;
         } else {
             return;
         }
@@ -35,6 +41,6 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
         buffer.writeBytes(result.toByteArray());
 
         BinaryWebSocketFrame binaryWebSocketFrame = new BinaryWebSocketFrame(buffer);
-        super.write(ctx,binaryWebSocketFrame,promise);
+        super.write(ctx, binaryWebSocketFrame, promise);
     }
 }
