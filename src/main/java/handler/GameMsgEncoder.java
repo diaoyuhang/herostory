@@ -18,24 +18,15 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
             return;
         }
 
-        short msgCode = -1;
+        short msgCode =MsgCodecUtils.getMsgCodeFromGeneratedMessageV3(msg);
 
-        if (msg instanceof GameMsgProtocol.UserEntryResult) {
-            msgCode = GameMsgProtocol.MsgCode.USER_ENTRY_RESULT_VALUE;
-
-        } else if (msg instanceof GameMsgProtocol.WhoElseIsHereResult) {
-            msgCode = GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_RESULT_VALUE;
-        } else if (msg instanceof GameMsgProtocol.UserQuitResult) {
-            msgCode = GameMsgProtocol.MsgCode.USER_QUIT_RESULT_VALUE;
-        } else if (msg instanceof GameMsgProtocol.UserMoveToResult){
-            msgCode = GameMsgProtocol.MsgCode.USER_MOVE_TO_RESULT_VALUE;
-        } else {
+        if (msgCode == -1){
             return;
         }
 
         ByteBuf buffer = ctx.alloc().buffer();
         buffer.writeShort((short) 0);
-        buffer.writeShort((short) msgCode);
+        buffer.writeShort(msgCode);
 
         GeneratedMessageV3 result = (GeneratedMessageV3) msg;
         buffer.writeBytes(result.toByteArray());
