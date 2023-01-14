@@ -1,35 +1,63 @@
 package handler;
 
 import com.google.protobuf.GeneratedMessageV3;
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Internal;
+import com.google.protobuf.Message;
 import msg.GameMsgProtocol;
 
-public class MsgCodecUtils {
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
-    public static GeneratedMessageV3 getGeneratedMessageV3FromMsgCode(byte[] msgBody, short msgCode) throws InvalidProtocolBufferException {
-        switch (msgCode) {
-            case GameMsgProtocol.MsgCode.USER_ENTRY_CMD_VALUE:
-                return GameMsgProtocol.UserEntryCmd.parseFrom(msgBody);
-            case GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_CMD_VALUE:
-                return GameMsgProtocol.WhoElseIsHereCmd.parseFrom(msgBody);
-            case GameMsgProtocol.MsgCode.USER_MOVE_TO_CMD_VALUE:
-                return GameMsgProtocol.UserMoveToCmd.parseFrom(msgBody);
-            default:
-                return null;
-        }
+public final class MsgCodecUtils {
+
+    private MsgCodecUtils() {
     }
 
-    public static short getMsgCodeFromGeneratedMessageV3(Object msg) {
-        if (msg instanceof GameMsgProtocol.UserEntryResult) {
-            return GameMsgProtocol.MsgCode.USER_ENTRY_RESULT_VALUE;
-        } else if (msg instanceof GameMsgProtocol.WhoElseIsHereResult) {
-            return GameMsgProtocol.MsgCode.WHO_ELSE_IS_HERE_RESULT_VALUE;
-        } else if (msg instanceof GameMsgProtocol.UserQuitResult) {
-            return GameMsgProtocol.MsgCode.USER_QUIT_RESULT_VALUE;
-        } else if (msg instanceof GameMsgProtocol.UserMoveToResult) {
-            return GameMsgProtocol.MsgCode.USER_MOVE_TO_RESULT_VALUE;
-        } else {
+    private static final HashMap<Integer, GeneratedMessageV3> codeMsgBuildMap = new HashMap<>();
+    private static final HashMap<Class, Integer> msgCodeMap = new HashMap<>();
+
+    static {
+        GameMsgProtocol.MsgCode[] msgCodes = GameMsgProtocol.MsgCode.values();
+
+        Class<?>[] declaredClasses = GameMsgProtocol.class.getDeclaredClasses();
+
+        for (Class clazz : declaredClasses) {
+            String clazzName = clazz.getSimpleName();
+
+            if (!GeneratedMessageV3.class.isAssignableFrom(clazz)) {
+                continue;
+            }
+
+            for (GameMsgProtocol.MsgCode msgCodeEnum : msgCodes) {
+                String msgCodeEnumName = msgCodeEnum.name();
+                String codeName = msgCodeEnumName.replace("_", "");
+
+                if (codeName.equalsIgnoreCase(clazzName)) {
+
+                    try {
+                        GeneratedMessageV3 instance = (GeneratedMessageV3) clazz.getDeclaredMethod("getDefaultInstance").invoke(clazz);
+                        codeMsgBuildMap.put(msgCodeEnum.getNumber(), instance);
+                    } catch (Exception e) {
+                        System.out.println("异常" + e.getMessage());
+                    }
+
+                    msgCodeMap.put(clazz,msgCodeEnum.getNumber());
+                }
+            }
+        }
+        System.out.println("初始化完成");
+    }
+
+    public static Message.Builder getMsgBuildFromMsgCode(int msgCode) {
+
+        return codeMsgBuildMap.get(msgCode).newBuilderForType();
+    }
+
+    public static int getMsgCodeFromGeneratedMessageV3(Object msg) {
+        if (!msgCodeMap.containsKey(msg.getClass())) {
             return -1;
         }
+        return msgCodeMap.get(msg.getClass());
+
     }
 }

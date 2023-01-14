@@ -5,7 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import msg.GameMsgProtocol;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 public final class CmdHandlerFactory {
 
@@ -13,9 +15,10 @@ public final class CmdHandlerFactory {
     public static final Map<Class, ICmdHandler> cmdMap = new HashMap<>();
 
     static {
-        cmdMap.put(UserEntryCmdHandler.class, new UserEntryCmdHandler());
-        cmdMap.put(WhoElseIsHereCmdHandler.class, new WhoElseIsHereCmdHandler());
-        cmdMap.put(UserMoveToCmdHandler.class, new UserMoveToCmdHandler());
+
+        cmdMap.put(GameMsgProtocol.UserEntryCmd.class, new UserEntryCmdHandler());
+        cmdMap.put(GameMsgProtocol.WhoElseIsHereCmd.class, new WhoElseIsHereCmdHandler());
+        cmdMap.put(GameMsgProtocol.UserMoveToCmd.class, new UserMoveToCmdHandler());
     }
 
     public static void handler(ChannelHandlerContext channelHandlerContext, Object o) {
