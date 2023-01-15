@@ -27,10 +27,16 @@ public class GameMsgInbound extends SimpleChannelInboundHandler {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        Integer userId = (Integer) ctx.channel().attr(AttributeKey.valueOf("userId")).get();
+        BroadcastChannelGroup.removeChannel(ctx.channel());
+        Object userIdObj = ctx.channel().attr(AttributeKey.valueOf("userId")).get();
+
+        if (userIdObj==null){
+            return;
+        }
+
+        Integer userId = (Integer)userIdObj;
         UserInfosUtils.remove(userId);
 
-        BroadcastChannelGroup.removeChannel(ctx.channel());
 
         GameMsgProtocol.UserQuitResult userQuitResult = GameMsgProtocol.UserQuitResult.newBuilder().setQuitUserId(userId).build();
         BroadcastChannelGroup.broadcast(userQuitResult);
