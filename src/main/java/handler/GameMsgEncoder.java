@@ -18,7 +18,7 @@ public class GameMsgEncoder extends ChannelOutboundHandlerAdapter {
             return;
         }
 
-        short msgCode =MsgCodecUtils.getMsgCodeFromGeneratedMessageV3(msg);
+        short msgCode = (short) MsgCodecUtils.getMsgCodeFromGeneratedMessageV3(msg);
 
         if (msgCode == -1){
             return;

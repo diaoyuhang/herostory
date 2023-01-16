@@ -1,4 +1,3 @@
-cd /opt/software/herostory
 git pull
 mvn clean
 mvn package

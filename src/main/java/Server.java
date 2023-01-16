@@ -11,9 +11,23 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import msgHandler.CmdHandlerFactory;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
+
+import java.io.File;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class Server {
-
+    static Logger logger = Logger.getLogger(Server.class);
     public static void main(String[] args) throws InterruptedException {
 
         NioEventLoopGroup boss = new NioEventLoopGroup(1);
@@ -36,7 +50,8 @@ public class Server {
             }
         }).bind(8080).sync();
 
-        System.out.println("服务启动！");
+//        System.out.println("服务启动！");
+        logger.warn("服务启动成功");
         channelFuture.channel().closeFuture().sync();
 
     }

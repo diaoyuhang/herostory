@@ -16,15 +16,16 @@ public class WhoElseIsHereCmdHandler implements ICmdHandler<GameMsgProtocol.WhoE
         GeneratedMessageV3 result;
         Integer userId = (Integer) channelHandlerContext.channel().attr(AttributeKey.valueOf("userId")).get();
 
+        GameMsgProtocol.WhoElseIsHereResult.Builder whoElseIsHereResultBuilder = GameMsgProtocol.WhoElseIsHereResult.newBuilder();
+
         for (User user : UserInfosUtils.userList()) {
             //排除当前用户
             if (user.getUserId() != userId) {
                 GameMsgProtocol.WhoElseIsHereResult.UserInfo userInfo =
                         GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder().setUserId(user.getUserId()).setHeroAvatar(user.getHeroAvatar()).build();
-
-                result = GameMsgProtocol.WhoElseIsHereResult.newBuilder().setUserInfo(user.getUserId(), userInfo).build();
-                channelHandlerContext.writeAndFlush(result);
+                whoElseIsHereResultBuilder.addUserInfo(userInfo);
             }
         }
+        channelHandlerContext.writeAndFlush(whoElseIsHereResultBuilder.build());
     }
 }

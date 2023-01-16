@@ -1,11 +1,10 @@
 package handler;
 
-import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import msg.GameMsgProtocol;
 
 public class GameMsgDecoder extends ChannelInboundHandlerAdapter {
     @Override
@@ -21,8 +20,14 @@ public class GameMsgDecoder extends ChannelInboundHandlerAdapter {
         byte[] msgBody = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(msgBody);
 
-        GeneratedMessageV3 cmd = null;
-        MsgCodecUtils.getGeneratedMessageV3FromMsgCode(msgBody,msgCode);
+        Message.Builder cmdBuilder = MsgCodecUtils.getMsgBuildFromMsgCode(msgCode);
+        if (cmdBuilder == null) {
+            return;
+        }
+        cmdBuilder.clear();
+        cmdBuilder.mergeFrom(msgBody);
+        Message cmd = cmdBuilder.build();
+
         if (null != cmd) {
             ctx.fireChannelRead(cmd);
         }
