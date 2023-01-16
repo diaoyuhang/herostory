@@ -24,4 +24,8 @@ public class UserInfosUtils {
     public static Collection<User> userList(){
         return users.values();
     }
+
+    public static User get(Integer userId){
+        return users.get(userId);
+    }
 }
