@@ -6,10 +6,18 @@ public class User {
 
     private Integer userId;
     private String heroAvatar;
-
+    private Integer hp = 100;
     private GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState moveState;
 
     public User() {
+    }
+
+    public Integer getHp() {
+        return hp;
+    }
+
+    public void setHp(Integer hp) {
+        this.hp = hp;
     }
 
     public GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState getMoveState() {
