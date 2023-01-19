@@ -3,7 +3,8 @@ package msgHandler;
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import msg.GameMsgProtocol;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +15,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public final class CmdHandlerFactory {
-    static Logger logger = Logger.getLogger(CmdHandlerFactory.class);
+    static Logger logger = LoggerFactory.getLogger(CmdHandlerFactory.class);
     public static final Map<Class, ICmdHandler> cmdMap = new HashMap<>();
 
     private CmdHandlerFactory() {
