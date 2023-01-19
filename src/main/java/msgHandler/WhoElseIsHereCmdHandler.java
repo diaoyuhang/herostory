@@ -7,9 +7,6 @@ import io.netty.util.AttributeKey;
 import msg.GameMsgProtocol;
 import pojo.User;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class WhoElseIsHereCmdHandler implements ICmdHandler<GameMsgProtocol.WhoElseIsHereCmd>{
     @Override
     public void handler(ChannelHandlerContext channelHandlerContext, GameMsgProtocol.WhoElseIsHereCmd o) {
@@ -21,9 +18,16 @@ public class WhoElseIsHereCmdHandler implements ICmdHandler<GameMsgProtocol.WhoE
         for (User user : UserInfosUtils.userList()) {
             //排除当前用户
             if (user.getUserId() != userId) {
-                GameMsgProtocol.WhoElseIsHereResult.UserInfo userInfo =
-                        GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder().setUserId(user.getUserId()).setHeroAvatar(user.getHeroAvatar()).build();
-                whoElseIsHereResultBuilder.addUserInfo(userInfo);
+                GameMsgProtocol.WhoElseIsHereResult.UserInfo.Builder userInfoBuilder = GameMsgProtocol.WhoElseIsHereResult.UserInfo.newBuilder();
+                userInfoBuilder.setUserId(user.getUserId());
+                userInfoBuilder.setHeroAvatar(user.getHeroAvatar());
+
+                GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState moveState = user.getMoveState();
+                if (moveState!=null){
+                    userInfoBuilder.setMoveState(moveState);
+                }
+
+                whoElseIsHereResultBuilder.addUserInfo(userInfoBuilder.build());
             }
         }
         channelHandlerContext.writeAndFlush(whoElseIsHereResultBuilder.build());

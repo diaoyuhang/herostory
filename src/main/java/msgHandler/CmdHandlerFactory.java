@@ -35,9 +35,21 @@ public final class CmdHandlerFactory {
 
         initCmdMap(simpleNameAndClassMap);
     }
-    public static void handler(ChannelHandlerContext channelHandlerContext, Object o) {
-        cmdMap.get(o.getClass()).handler(channelHandlerContext, cast(o));
 
+    public static void handler(ChannelHandlerContext channelHandlerContext, Object o) {
+        ICmdHandler iCmdHandler = cmdMap.get(o.getClass());
+
+        if (iCmdHandler instanceof UserAttkCmdHandler) {
+            //存在并发问题的交给单线程处理
+            MainSingleThreadProcessor.instance.addRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    iCmdHandler.handler(channelHandlerContext, cast(o));
+                }
+            });
+        }else{
+            iCmdHandler.handler(channelHandlerContext, cast(o));
+        }
     }
 
     private static <TCmd extends GeneratedMessageV3> TCmd cast(Object o) {
