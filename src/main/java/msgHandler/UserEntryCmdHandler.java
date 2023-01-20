@@ -14,13 +14,16 @@ public class UserEntryCmdHandler implements ICmdHandler<GameMsgProtocol.UserEntr
     @Override
     public void handler(ChannelHandlerContext channelHandlerContext, GameMsgProtocol.UserEntryCmd o) {
         GeneratedMessageV3 result;
-        GameMsgProtocol.UserEntryCmd entryCmd = o;
-        result = GameMsgProtocol.UserEntryResult.newBuilder().setUserId(entryCmd.getUserId()).setHeroAvatar(entryCmd.getHeroAvatar()).build();
 
         Channel channel = channelHandlerContext.channel();
-        channel.attr(AttributeKey.valueOf("userId")).set(entryCmd.getUserId());
+        Integer userId = (Integer) channel.attr(AttributeKey.valueOf("userId")).get();
+        User user = UserInfosUtils.get(userId);
+        if (user==null){
+            return;
+        }
 
-        UserInfosUtils.put(entryCmd.getUserId(), new User(entryCmd.getUserId(), entryCmd.getHeroAvatar()));
+        result = GameMsgProtocol.UserEntryResult.newBuilder().setUserId(user.getUserId()).setHeroAvatar(user.getHeroAvatar()).build();
+
         BroadcastChannelGroup.broadcast(result);
     }
 }

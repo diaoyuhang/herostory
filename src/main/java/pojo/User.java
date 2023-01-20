@@ -5,11 +5,20 @@ import msg.GameMsgProtocol;
 public class User {
 
     private Integer userId;
+    private String userName;
     private String heroAvatar;
     private Integer hp = 100;
     private GameMsgProtocol.WhoElseIsHereResult.UserInfo.MoveState moveState;
 
     public User() {
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Integer getHp() {
@@ -28,9 +37,10 @@ public class User {
         this.moveState = moveState;
     }
 
-    public User(Integer userId, String heroAvatar) {
+    public User(Integer userId, String heroAvatar,String userName) {
         this.userId = userId;
         this.heroAvatar = heroAvatar;
+        this.userName=userName;
     }
 
     public Integer getUserId() {
